@@ -111,17 +111,7 @@ Have you authorized me? (y/n)
 (EXJIRA) Excitement for JIRA Project People
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗
 ```
-* Original implementation is available here: https://bitbucket.org/atlassian_tutorial/atlassian-oauth-examples under python/app.py
-* Copied here as jira_oauth_token_generator.py with modifications:
-    * Since we are not able to resolve SSL Certification problem, let's disable ssl certificate validation for each REST api call. 
-	  client.disable_ssl_certificate_validation = True
-	* Strangely first time (before you approve request in browser) when you access data_url, browser returns 200 response with content of zero bytes instead of 401 response as original code says. Hence I've commented out response code validation for this part.
-	* Also I've refactored and removed SignatureMethod_RSA_SHA1 into it's own file. This way we can import it into any other python program!
-* Python 3 compatible!
 
-* Pre-Requisities:
-    * You have generated RSA Private and Public keys and stored them into files "oauth.pem" and "oauth.pub" respectively.
-    * config/ directory contain "starter_oauth.config" file with following details:
-        jira_base_url=<JIRA Application URL>
-        consumer_key=<enter as registered by your Jira Admin during Application Link creation>
-    *  
+>Original implementation is available here: 
+>
+> https://bitbucket.org/atlassian_tutorial/atlassian-oauth-examples under python/app.py
