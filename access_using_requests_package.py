@@ -50,19 +50,26 @@ def get_jira_session(init_dict):
     return session    
 
 def get_jira_projects(session, base_url):
+    print("")
+    print("Reteriving 1st Jira Project available to you:")
     jira_projects_url =  base_url + '/rest/api/2/project'
     response = jira_session.get(jira_projects_url)
     response.raise_for_status()
     # Get First Project name from list of Projects reterived.
     print(response.json()[0]['name'])
+    print("")
 
 def add_comment_to_issue(session, base_url, issue_key):
+    print("")
+    print(f"Adding comment to issue {issue_key}")
     try:
         post_data_dict = {}
         post_data_dict["body"] = "This is a test comment using bare REST api."
         post_result = session.post(f"{base_url}/rest/api/2/issue/{issue_key}/comment", 
                                     json = post_data_dict)
         post_result.raise_for_status()
+        print("Comment successfully added. Please verify through browser!")
+        print("")
     except requests.exceptions.HTTPError as err:
         print (err)    
 

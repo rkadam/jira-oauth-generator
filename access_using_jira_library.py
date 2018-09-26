@@ -32,9 +32,14 @@ oauth_dict = {
 }
 
 ajira = JIRA(oauth=oauth_dict, server = jira_url)
+print("")
+print(f"Reteriving Issue: {test_issue_key}")
 issue = ajira.issue(test_issue_key, fields ='summary,comment')
-print (issue.fields.summary)
+print (f"Issue:{test_issue_key}, Summary: {issue.fields.summary}")
+print("")
 
+print("Reteriving 1st three Jira Projects available to you:")
 projects = ajira.projects()
 keys = sorted([project.key for project in projects])[2:5]
 print("First 3 Projects are %s" %keys)
+print("")
