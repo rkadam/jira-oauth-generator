@@ -1,0 +1,4 @@
+config/oauth.pub
+config/oauth.pem
+config/final_oauth_token.config
+config/starter_oauth.config

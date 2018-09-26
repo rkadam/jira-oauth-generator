@@ -70,6 +70,7 @@ if __name__ == "__main__":
 
     init_dict = get_jira_oauth_init_parameters()
     base_url = init_dict["jira_url"]
+    test_issue_key = init_dict["test_issue_key"]
 
     jira_session = get_jira_session(init_dict)
 
@@ -77,4 +78,4 @@ if __name__ == "__main__":
     get_jira_projects(jira_session, base_url)
 
     # Add comment to given issue
-    add_comment_to_issue(jira_session, base_url, "ITDOS-123")
+    add_comment_to_issue(jira_session, base_url, test_issue_key)
