@@ -17,6 +17,8 @@
 
 import base64
 import os
+from pathlib import Path
+
 import json
 from urllib import parse
 
@@ -24,7 +26,7 @@ import oauth2 as oauth
 from tlslite.utils import keyfactory
 
 import argparse
-import configparser
+from configparser import ConfigParser
 
 class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
     name = 'RSA-SHA1'
@@ -50,9 +52,8 @@ class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
         """Builds the base signature string."""
         key, raw = self.signing_base(request, consumer, token)
 
-        path = os.path.dirname(os.path.abspath(__file__))
-        # Load Private Key file from "config" directory.
-        with open( path + '/config/oauth.pem', 'r') as f:
+        # Load RSA Private Key
+        with open( Path.home() / '.oauthconfig/oauth.pem', 'r') as f:
             data = f.read()
         privateKeyString = data.strip()
 
@@ -69,20 +70,19 @@ class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
         return base64.b64encode(signature)
 
 def get_jira_oauth_init_parameters():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("starter_oauth_config_path", help = "Enter complete file path for starter_oauth.config")
-    args = parser.parse_args()
 
-    config = configparser.SafeConfigParser()
-    config.read(args.starter_oauth_config_path)
+    # Assumption "starter_auth.config" file is stored in ~/.oauthconfig/ directory
+    starter_oauth_config_file = Path.home() / ".oauthconfig/starter_oauth.config"
+
+    config = ConfigParser()
+    config.optionxform=str # Read config file as case insensitive
+    config.read(starter_oauth_config_file)
     jira_url = config.get("oauth_config", "jira_base_url")
     consumer_key = config.get("oauth_config", "consumer_key")
     test_jira_issue = config.get("oauth_config","test_jira_issue")
 
-    
-    path = os.path.dirname(os.path.abspath(__file__))
     rsa_public_key = None
-    with open (path + '/config/oauth.pub', 'r') as key_cert_file:
+    with open ( Path.home() / '.oauthconfig/oauth.pub', 'r') as key_cert_file:
         rsa_public_key = key_cert_file.read()
 
     return {

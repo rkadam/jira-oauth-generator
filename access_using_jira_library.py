@@ -1,34 +1,36 @@
 from jira import JIRA
-from configparser import SafeConfigParser
+from configparser import ConfigParser
 import argparse
 import os
+from pathlib import Path
 
 parser = argparse.ArgumentParser()
-parser.add_argument("final_oauth_token_file_path", help = "Enter complete file path for final_oauth_token.config")
+parser.add_argument("jira_environment", help = "Enter Jira Environment where you want to run this library. Options: dev/prod")
 args = parser.parse_args()
 
-config = SafeConfigParser()
-config.read(args.final_oauth_token_file_path)
-jira_url = config.get("final_oauth_config", "jira_base_url")
-oauth_token = config.get("final_oauth_config", "oauth_token")
-oauth_token_secret=config.get("final_oauth_config", "oauth_token_secret")
-consumer_key = config.get("final_oauth_config", "consumer_key")
-test_issue_key = config.get("final_oauth_config", "test_issue_key")
+config = ConfigParser()
+config.read(Path.home() / f".oauthconfig/.oauth_jira_config.{args.jira_environment}")
+jira_url = config.get("server_info", "jira_base_url")
+
+oauth_token = config.get("oauth_token_config", "oauth_token")
+oauth_token_secret=config.get("oauth_token_config", "oauth_token_secret")
+consumer_key = config.get("oauth_token_config", "consumer_key")
+
+test_issue_key = config.get("jira_oauth_generator", "test_issue_key")
+
+rsa_private_key = None
+# Load RSA Private Key file.
+with open( Path.home() /'.oauthconfig/oauth.pem', 'r') as key_cert_file:
+    rsa_private_key = key_cert_file.read()
 
 if jira_url[-1] == '/':
 	jira_url = jira_url[0:-1]
 
-key_cert_data = None
-path = os.path.dirname(os.path.abspath(__file__))
-# Load Private Key file from "config" directory.
-with open( path + '/config/oauth.pem', 'r') as key_cert_file:
-    key_cert_data = key_cert_file.read()
-    
 oauth_dict = {
     'access_token' : oauth_token,
     'access_token_secret': oauth_token_secret,
     'consumer_key': consumer_key,
-    'key_cert': key_cert_data
+    'key_cert': rsa_private_key
 }
 
 ajira = JIRA(oauth=oauth_dict, server = jira_url)

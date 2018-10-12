@@ -4,30 +4,29 @@ Sample program demnostrating how to access Jira using OAuth1 tokens and Requests
 * Adds comment on given Issue with test_issue_key
 '''
 
-import configparser
+from configparser import ConfigParser
 import argparse
 import requests
 from requests_oauthlib import OAuth1
 import os
+from pathlib import Path
 
-def get_jira_oauth_init_parameters():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("final_oauth_token_config_file", help = "Enter complete file path for final_oauth_token.config")
-    args = parser.parse_args()
+def get_jira_oauth_init_parameters(jira_env):
 
-    config = configparser.SafeConfigParser()
-    config.read(args.final_oauth_token_config_file)
-    jira_url = config.get("final_oauth_config", "jira_base_url")
+    config = ConfigParser()
+    config.read(Path.home() / f".oauthconfig/.oauth_jira_config.{jira_env}")
 
-    oauth_token = config.get("final_oauth_config", "oauth_token")
-    oauth_token_secret=config.get("final_oauth_config", "oauth_token_secret")
-    consumer_key = config.get("final_oauth_config", "consumer_key")
-    test_issue_key = config.get("final_oauth_config", "test_issue_key")
+    jira_url = config.get("server_info", "jira_base_url")
+
+    oauth_token = config.get("oauth_token_config", "oauth_token")
+    oauth_token_secret=config.get("oauth_token_config", "oauth_token_secret")
+    consumer_key = config.get("oauth_token_config", "consumer_key")
+
+    test_issue_key = config.get("jira_oauth_generator", "test_issue_key")
 
     rsa_private_key = None
-    path = os.path.dirname(os.path.abspath(__file__))
-    # Load Private Key file from "config" directory.
-    with open( path + '/config/oauth.pem', 'r') as key_cert_file:
+    # Load RSA Private Key file.
+    with open( Path.home() /'.oauthconfig/oauth.pem', 'r') as key_cert_file:
         rsa_private_key = key_cert_file.read()
 
     oauth = OAuth1(client_key = consumer_key,
@@ -75,7 +74,11 @@ def add_comment_to_issue(session, base_url, issue_key):
 
 if __name__ == "__main__":
 
-    init_dict = get_jira_oauth_init_parameters()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("jira_environment", help = "Enter Jira Environment where you want to run this library. Options: dev/prod")
+    args = parser.parse_args()
+
+    init_dict = get_jira_oauth_init_parameters(args.jira_environment)
     base_url = init_dict["jira_url"]
     test_issue_key = init_dict["test_issue_key"]
 

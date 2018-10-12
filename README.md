@@ -16,6 +16,7 @@ pip install -r requirements.txt
 ```
 
 ### RSA Private and Public Key creations
+* Make sure you have **.oauthconfig** folder exists in your home directory
 * Create RSA Private key and store it in file **oauth.pem**
 ```
 openssl genrsa -out oauth.pem 1024
@@ -24,7 +25,7 @@ openssl genrsa -out oauth.pem 1024
 ```
 openssl rsa -in oauth.pem -pubout -out oauth.pub
 ```
-* Make sure both files are *copied* to **config** directory
+* Again make sure both files are *copied* to **.oauthconfig** folder in your home directory.
 * Also share RSA Public Key **oauth.pub** with your Jira Admin, as they need it during _Jira Application Link_ creation.
 
 
@@ -63,11 +64,11 @@ requirements.txt
 ```
 * Run **jira_oauth_token_generator.py**
 ```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py config/starter_oauth.config
+(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py
 ```
 * If you get TypeError, **string argument without an encoding** as below, you need to update **hashAndSign** function in rsakey.py where package is installed as shown in path below.
 ```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py config/starter_oauth.config
+(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py
 ...
 /../jira_oauth1_py3_env/lib/python3.6/site-packages/tlslite/utils/rsakey.py", line 62, in hashAndSign
     hashBytes = SHA1(bytearray(bytes))
@@ -81,7 +82,7 @@ In function hashAndSign(...),
 ```
 * Authenticate in browser as directed below and then click **y** for question *Have you authorized me?*
 ```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py config/starter_oauth.configRequest 
+(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py
 
 Token:
     - oauth_token        = sdfsdf2342edfsdfwfwfwer23432423    
@@ -105,11 +106,36 @@ Have you authorized me? (y/n)
 >
 > Issue key: EXJIRA-123, Summary: This is EXJIRA-123 Summary
 
-### Using OAuth1 tokens in Sample Jira Script.
+## Copy both oauth_token and oauth_token_secret to .oauth_jira_config.<jira_env> file.
 ```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python access_using_requests_package.py config/final_oauth_token.config
+(jira_oauth1_py3_env) ➜  .oauthconfig cat .oauth_jira_config.dev
+[oauth_token_config]
+oauth_token=sdfPxIsdfsdfs$sdf234sdgssd$sresdf
+oauth_token_secret=rswfsdfsdfjsdjlksjdfljsdlkfjsldfj
+consumer_key=jira-export-rest-api-access
+user_private_key_file_name=oauth.pem
+
+[server_info]
+jira_base_url=https://jira-dev.teslamotors.com
+
+[jira_oauth_generator]
+test_issue_key=ITDOS-145
+```
+
+### Using OAuth1 tokens in Sample Jira Script.
+* Using Python Requests library
+```
+(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python access_using_requests_package.py dev
 (EXJIRA) Excitement for JIRA Project People
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗
+```
+* Using Python JIRA library
+```
+(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python access_using_jira_library.py prod
+Reteriving Issue: ITEST-145
+Issue:ITEST-145, Summary: Test access request
+Reteriving 1st three Jira Projects available to you:
+First 3 Projects are ['TES', 'TEst', 'TEST']
 ```
 
 >Original implementation is available here: 
