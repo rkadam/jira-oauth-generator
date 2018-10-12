@@ -14,6 +14,8 @@ from pathlib import Path
 def get_jira_oauth_init_parameters(jira_env):
 
     config = ConfigParser()
+    print()
+    print(f"Reading OAuth from {Path.home()}/.oauthconfig/.oauth_jira_config.{jira_env}")
     config.read(Path.home() / f".oauthconfig/.oauth_jira_config.{jira_env}")
 
     jira_url = config.get("server_info", "jira_base_url")

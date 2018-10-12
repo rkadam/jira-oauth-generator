@@ -8,6 +8,9 @@ parser = argparse.ArgumentParser()
 parser.add_argument("jira_environment", help = "Enter Jira Environment where you want to run this library. Options: dev/prod")
 args = parser.parse_args()
 
+print()
+print(f"Reading OAuth from {Path.home()}/.oauthconfig/.oauth_jira_config.{args.jira_environment}")
+
 config = ConfigParser()
 config.read(Path.home() / f".oauthconfig/.oauth_jira_config.{args.jira_environment}")
 jira_url = config.get("server_info", "jira_base_url")
