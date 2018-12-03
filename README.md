@@ -39,16 +39,19 @@ openssl rsa -in oauth.pem -pubout -out oauth.pub
 * Don't need to fill any other information. Click on **Continue**
 * Now you should able to see new Application link with name **Jira OAuth1 REST API access** created and available under section *Configure Application Links* section
 * Click on *pencil* icon to configure **Incoming Authentication**
-  * Enter **jira-oauth1-rest-api-access** (or any other appropriate string) as *Consumer Key* 
+  * Enter **jira-oauth1-rest-api-access** (or any other appropriate string) as *Consumer Key*
   * Enter same string **jira-oauth1-rest-api-access** (or any other appropriate string) as *Consumer Name*
   * Enter content of RSA Public key (stored in file **oauth.pub**) as **Public Key**
   * Click on **Save**
 
-### Prepare for OAuth Dance 
-* Configure **starter_oauth.config** with correct values
-  * jira_base_url=https://jira.example.com
-  * consumer_key=jira-oauth1-rest-api-access
-  * test_jira_issue=EXJIRA-123
+### Prepare for OAuth Dance
+Create **starter_oauth.config** in **~/.oauthconfig** folder:
+```ini
+[oauth_config]
+jira_base_url=https://jira.example.com
+consumer_key=jira-oauth1-rest-api-access
+test_jira_issue=EXJIRA-123
+```
 
 Perform Jira OAuth Dance
 ================
@@ -85,7 +88,7 @@ In function hashAndSign(...),
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py
 
 Token:
-    - oauth_token        = sdfsdf2342edfsdfwfwfwer23432423    
+    - oauth_token        = sdfsdf2342edfsdfwfwfwer23432423
     - oauth_token_secret = sdfsdf2345t66w54564336sdgwtwte
 
 Go to the following link in your browser:
@@ -138,6 +141,6 @@ Reteriving 1st three Jira Projects available to you:
 First 3 Projects are ['TES', 'TEst', 'TEST']
 ```
 
->Original implementation is available here: 
+>Original implementation is available here:
 >
 > https://bitbucket.org/atlassian_tutorial/atlassian-oauth-examples under python/app.py
