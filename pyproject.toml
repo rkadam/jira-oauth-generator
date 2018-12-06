@@ -2,7 +2,7 @@
 name = "jira-oauth-generator"
 version = "0.1.0"
 description = "Generator of access token for Jira OAuth"
-authors = ["Roman Inflianskas <infroma@gmail.com>"]
+authors = ["Raju Kadam", "Roman Inflianskas <infroma@gmail.com>"]
 license = "Apache-2.0"
 
 [tool.poetry.dependencies]
