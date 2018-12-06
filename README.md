@@ -62,30 +62,18 @@ Perform Jira OAuth Dance
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_generator/jira_oauth_token_generator.py
 ```
 * Authenticate in browser as directed below and then click **y** for question *Have you authorized me?*
+* After successful oAuth generation, you will get another set of values for **oauth_token** and **oauth_token_secret**. These are you tokens that you need to use access Jira without passing credentials.
 ```
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_generator/jira_oauth_token_generator.py
-
-Token:
-    - oauth_token        = sdfsdf2342edfsdfwfwfwer23432423
-    - oauth_token_secret = sdfsdf2345t66w54564336sdgwtwte
-
-Go to the following link in your browser:
-https://jira.example.com/plugins/servlet/oauth/authorize?oauth_token=O2hfcGETBfKpxpvB5L6WzQc4dwaxGCPe
-Have you authorized me? (y/n)
+INFO:__main__:Request Token: oauth_token=LS1gHAyMA5kWPCPWfZhjAKMDtmL9SuQY, oauth_token_secret=DZqKURsivez9fPOJtIWPMaz5ki4UODYQ
+Go to the following link in your browser: https://jira-dev.kama.gs/plugins/servlet/oauth/authorize?oauth_token=LS1gHAyMA5kWPCPWfZhjAKMDtmL9SuQY
+Have you authorized me? (y/n) y
+INFO:__main__:Access Token: oauth_token=rsxoFVdH83H9olhCZ0YH8AlGqgbdoYuB, oauth_token_secret=DZqKURsivez9fPOJtIWPMaz5ki4UODYQ
+INFO:__main__:You may now access protected resources using the access tokens above.
+INFO:__main__:Accessing IDEV-1 using generated OAuth tokens:
+INFO:__main__:Success!
+INFO:__main__:Issue key: IDEV-1, Summary: Internal Devepment Issue #1
 ```
-* After successful oAuth generation, you will get another set of values for **oauth_token** and **oauth_token_secret**. These are you tokens that you need to use access Jira without passing credentials.
-> Access Token:
->    - oauth_token        = sdfPxIsdfsdfs$sdf234sdgssd$sresdf
->    - oauth_token_secret = rswfsdfsdfjsdjlksjdfljsdlkfjsldfj
->
-> You may now access protected resources using the access tokens above.
->
->
-> Accessing EXJIRA-123 using generated OAuth tokens:
->
-> Success!
->
-> Issue key: EXJIRA-123, Summary: This is EXJIRA-123 Summary
 
 ## Copy both oauth_token and oauth_token_secret to .oauth_jira_config.<jira_env> file.
 ```
