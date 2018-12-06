@@ -1,4 +1,4 @@
-'''
+"""
 * Original implementation is available here: https://bitbucket.org/atlassian_tutorial/atlassian-oauth-examples under python/app.py
 * Copied here as jira_oauth_token_generator.py with modifications:
     * Since we are not able to resolve SSL Certification problem, let's disable ssl certificate validation for each REST api call. 
@@ -12,21 +12,17 @@
     * config/ directory contain "starter_oauth.config" file with following details:
         jira_base_url=<JIRA Application URL>
         consumer_key=<enter as registered by your Jira Admin during Application Link creation>
-    *    
-'''
-
-import base64
-import os
-from pathlib import Path
-
-import json
-from urllib import parse
-
-import oauth2 as oauth
-from tlslite.utils import keyfactory
-
-import argparse
+    *
+"""
 from configparser import ConfigParser
+from pathlib import Path
+from urllib import parse
+import base64
+import json
+
+from tlslite.utils import keyfactory
+import oauth2 as oauth
+
 
 class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
     name = 'RSA-SHA1'
