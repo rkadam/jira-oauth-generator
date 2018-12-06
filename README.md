@@ -69,20 +69,6 @@ requirements.txt
 ```
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py
 ```
-* If you get TypeError, **string argument without an encoding** as below, you need to update **hashAndSign** function in rsakey.py where package is installed as shown in path below.
-```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py
-...
-/../jira_oauth1_py3_env/lib/python3.6/site-packages/tlslite/utils/rsakey.py", line 62, in hashAndSign
-    hashBytes = SHA1(bytearray(bytes))
-TypeError: string argument without an encoding
-```
-  * To fix this error, add explicitly "utf8" encoding in rsakey.py in hashAndSign function
-```
-In function hashAndSign(...),
-    *changed line* ->   hashBytes = SHA1(bytearray(bytes))
-    to ->               hashBytes = SHA1(bytearray(bytes, "utf8"))
-```
 * Authenticate in browser as directed below and then click **y** for question *Have you authorized me?*
 ```
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py

@@ -83,14 +83,7 @@ class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
         """Builds the base signature string."""
         key, raw = self.signing_base(request, consumer, token)
         privatekey = keyfactory.parsePrivateKey(self.rsa_private_key)
-
-        '''
-            We were getting errors on encoding, so added explicitly "utf8" encoding in rsakey.py
-            In function hashAndSign(...),
-                *changed line* ->   hashBytes = SHA1(bytearray(bytes))
-                to ->               hashBytes = SHA1(bytearray(bytes, "utf8"))
-        '''
-        signature = privatekey.hashAndSign(raw)
+        signature = privatekey.hashAndSign(bytearray(raw, 'utf8'))
 
         return base64.b64encode(signature)
 
