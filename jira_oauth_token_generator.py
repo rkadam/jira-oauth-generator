@@ -89,110 +89,115 @@ def get_jira_oauth_init_parameters():
     }
 
 
-init_dict = get_jira_oauth_init_parameters()
-consumer_key = init_dict["consumer_key"]
-consumer_secret = init_dict["rsa_public_key"]
-test_jira_issue = init_dict["test_jira_issue"]
+def generate_oauth_token():
+    init_dict = get_jira_oauth_init_parameters()
+    consumer_key = init_dict["consumer_key"]
+    consumer_secret = init_dict["rsa_public_key"]
+    test_jira_issue = init_dict["test_jira_issue"]
 
-base_url = init_dict["jira_base_url"]
-request_token_url = base_url + '/plugins/servlet/oauth/request-token'
-access_token_url = base_url + '/plugins/servlet/oauth/access-token'
-authorize_url = base_url + '/plugins/servlet/oauth/authorize'
+    base_url = init_dict["jira_base_url"]
+    request_token_url = base_url + '/plugins/servlet/oauth/request-token'
+    access_token_url = base_url + '/plugins/servlet/oauth/access-token'
+    authorize_url = base_url + '/plugins/servlet/oauth/authorize'
 
-data_url = base_url + f'/rest/api/2/issue/{test_jira_issue}?fields=summary'
+    data_url = base_url + f'/rest/api/2/issue/{test_jira_issue}?fields=summary'
 
-consumer = oauth.Consumer(consumer_key, consumer_secret)
-client = oauth.Client(consumer)
-client.disable_ssl_certificate_validation = True
+    consumer = oauth.Consumer(consumer_key, consumer_secret)
+    client = oauth.Client(consumer)
+    client.disable_ssl_certificate_validation = True
 
-# Lets try to retrieve mentioned Jira issue
-resp, content = client.request(data_url, "GET")
+    # Lets try to retrieve mentioned Jira issue
+    resp, content = client.request(data_url, "GET")
 
-'''
-# As per original code, we should get 401, but browser returns 200.
-if resp['status'] != '401':
-    raise Exception("Should have no access!")
-'''
+    '''
+    # As per original code, we should get 401, but browser returns 200.
+    if resp['status'] != '401':
+        raise Exception("Should have no access!")
+    '''
 
-consumer = oauth.Consumer(consumer_key, consumer_secret)
-client = oauth.Client(consumer)
-client.set_signature_method(SignatureMethod_RSA_SHA1())
+    consumer = oauth.Consumer(consumer_key, consumer_secret)
+    client = oauth.Client(consumer)
+    client.set_signature_method(SignatureMethod_RSA_SHA1())
 
-# Step 1: Get a request token. This is a temporary token that is used for
-# having the user authorize an access token and to sign the request to obtain
-# said access token.
-resp, content = client.request(request_token_url, "POST")
-if resp['status'] != '200':
-    raise Exception("Invalid response %s: %s" % (resp['status'], content))
+    # Step 1: Get a request token. This is a temporary token that is used for
+    # having the user authorize an access token and to sign the request to obtain
+    # said access token.
+    resp, content = client.request(request_token_url, "POST")
+    if resp['status'] != '200':
+        raise Exception("Invalid response %s: %s" % (resp['status'], content))
 
-# If output is in bytes. Let's convert it into String.
-if type(content) == bytes:
-    content = content.decode('UTF-8')
+    # If output is in bytes. Let's convert it into String.
+    if type(content) == bytes:
+        content = content.decode('UTF-8')
 
-request_token = dict(parse.parse_qsl(content))
-print("Request Token:")
-print(f"    - oauth_token        = {request_token['oauth_token']}")
-print("    - oauth_token_secret = %s" % request_token['oauth_token_secret'])
-print("")
+    request_token = dict(parse.parse_qsl(content))
+    print("Request Token:")
+    print(f"    - oauth_token        = {request_token['oauth_token']}")
+    print("    - oauth_token_secret = %s" % request_token['oauth_token_secret'])
+    print("")
 
-# Step 2: Redirect to the provider. Since this is a CLI script we do not
-# redirect. In a web application you would redirect the user to the URL
-# below.
+    # Step 2: Redirect to the provider. Since this is a CLI script we do not
+    # redirect. In a web application you would redirect the user to the URL
+    # below.
 
-print("Go to the following link in your browser:")
-print("%s?oauth_token=%s" % (authorize_url, request_token['oauth_token']))
-print()
+    print("Go to the following link in your browser:")
+    print("%s?oauth_token=%s" % (authorize_url, request_token['oauth_token']))
+    print()
 
-# After the user has granted access to you, the consumer, the provider will
-# redirect you to whatever URL you have told them to redirect to. You can
-# usually define this in the oauth_callback argument as well.
-accepted = 'n'
-while accepted.lower() == 'n':
-    accepted = input('Have you authorized me? (y/n) ')
-# oauth_verifier = raw_input('What is the PIN? ')
+    # After the user has granted access to you, the consumer, the provider will
+    # redirect you to whatever URL you have told them to redirect to. You can
+    # usually define this in the oauth_callback argument as well.
+    accepted = 'n'
+    while accepted.lower() == 'n':
+        accepted = input('Have you authorized me? (y/n) ')
+    # oauth_verifier = raw_input('What is the PIN? ')
 
-# Step 3: Once the consumer has redirected the user back to the oauth_callback
-# URL you can request the access token the user has approved. You use the
-# request token to sign this request. After this is done you throw away the
-# request token and use the access token returned. You should store this
-# access token somewhere safe, like a database, for future use.
-token = oauth.Token(request_token['oauth_token'],
-                    request_token['oauth_token_secret'])
-# token.set_verifier(oauth_verifier)
-client = oauth.Client(consumer, token)
-client.set_signature_method(SignatureMethod_RSA_SHA1())
+    # Step 3: Once the consumer has redirected the user back to the oauth_callback
+    # URL you can request the access token the user has approved. You use the
+    # request token to sign this request. After this is done you throw away the
+    # request token and use the access token returned. You should store this
+    # access token somewhere safe, like a database, for future use.
+    token = oauth.Token(request_token['oauth_token'],
+                        request_token['oauth_token_secret'])
+    # token.set_verifier(oauth_verifier)
+    client = oauth.Client(consumer, token)
+    client.set_signature_method(SignatureMethod_RSA_SHA1())
 
-resp, content = client.request(access_token_url, "POST")
-# Response is coming in bytes. Let's convert it into String.
-# If output is in bytes. Let's convert it into String.
-if type(content) == bytes:
-    content = content.decode('UTF-8')
-access_token = dict(parse.parse_qsl(content))
+    resp, content = client.request(access_token_url, "POST")
+    # Response is coming in bytes. Let's convert it into String.
+    # If output is in bytes. Let's convert it into String.
+    if type(content) == bytes:
+        content = content.decode('UTF-8')
+    access_token = dict(parse.parse_qsl(content))
 
-print("Access Token:")
-print("    - oauth_token        = %s" % access_token['oauth_token'])
-print("    - oauth_token_secret = %s" % access_token['oauth_token_secret'])
-print("")
-print("You may now access protected resources using the access tokens above.")
-print("")
+    print("Access Token:")
+    print("    - oauth_token        = %s" % access_token['oauth_token'])
+    print("    - oauth_token_secret = %s" % access_token['oauth_token_secret'])
+    print("")
+    print("You may now access protected resources using the access tokens above.")
+    print("")
 
-print("")
-print(f"Accessing {test_jira_issue} using generated OAuth tokens:")
-print("")
-# Now lets try to access the same issue again with the access token. We should get a 200!
-accessToken = oauth.Token(access_token['oauth_token'],
-                          access_token['oauth_token_secret'])
-client = oauth.Client(consumer, accessToken)
-client.set_signature_method(SignatureMethod_RSA_SHA1())
+    print("")
+    print(f"Accessing {test_jira_issue} using generated OAuth tokens:")
+    print("")
+    # Now lets try to access the same issue again with the access token. We should get a 200!
+    accessToken = oauth.Token(access_token['oauth_token'],
+                              access_token['oauth_token_secret'])
+    client = oauth.Client(consumer, accessToken)
+    client.set_signature_method(SignatureMethod_RSA_SHA1())
 
-resp, content = client.request(data_url, "GET")
-if resp['status'] != '200':
-    raise Exception("Should have access!")
+    resp, content = client.request(data_url, "GET")
+    if resp['status'] != '200':
+        raise Exception("Should have access!")
 
-print("Success!")
-# If output is in bytes. Let's convert it into String.
-if type(content) == bytes:
-    content = content.decode('UTF-8')
-json_content = json.loads(content)
-print(f'Issue key: {json_content["key"]}, Summary: {json_content["fields"]["summary"]} ')
-print("")
+    print("Success!")
+    # If output is in bytes. Let's convert it into String.
+    if type(content) == bytes:
+        content = content.decode('UTF-8')
+    json_content = json.loads(content)
+    print(f'Issue key: {json_content["key"]}, Summary: {json_content["fields"]["summary"]} ')
+    print("")
+
+
+if __name__ == '__main__':
+    generate_oauth_token()
