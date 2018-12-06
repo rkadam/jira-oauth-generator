@@ -24,9 +24,28 @@ from tlslite.utils import keyfactory
 import oauth2 as oauth
 
 
+oauth_config_dir_path = Path.home() / '.oauthconfig'
+starter_oauth_config_file = oauth_config_dir_path / 'starter_oauth.config'
+rsa_private_key_file_path = oauth_config_dir_path / 'oauth.pem'
+rsa_public_key_file_path = oauth_config_dir_path / 'oauth.pub'
+
+
+def read_rsa_private_key(path):
+    with open(file=path, mode='r') as f:
+        return f.read()
+
+
+def read_rsa_public_key(path):
+    with open(file=path, mode='r') as key_cert_file:
+        return key_cert_file.read()
+
+
 # noinspection PyPep8Naming
 class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
     name = 'RSA-SHA1'
+
+    def __init__(self, rsa_private_key):
+        self.rsa_private_key = rsa_private_key.strip()
 
     def signing_base(self, request, consumer, token):
         if not hasattr(request,
@@ -48,13 +67,7 @@ class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
     def sign(self, request, consumer, token):
         """Builds the base signature string."""
         key, raw = self.signing_base(request, consumer, token)
-
-        # Load RSA Private Key
-        with open(Path.home() / '.oauthconfig/oauth.pem', 'r') as f:
-            data = f.read()
-        privateKeyString = data.strip()
-
-        privatekey = keyfactory.parsePrivateKey(privateKeyString)
+        privatekey = keyfactory.parsePrivateKey(self.rsa_private_key)
 
         '''
             We were getting errors on encoding, so added explicitly "utf8" encoding in rsakey.py
@@ -68,18 +81,13 @@ class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
 
 
 def get_jira_oauth_init_parameters():
-    # Assumption "starter_auth.config" file is stored in ~/.oauthconfig/ directory
-    starter_oauth_config_file = Path.home() / ".oauthconfig/starter_oauth.config"
-
     config = ConfigParser()
     config.optionxform=str # Read config file as case insensitive
     config.read(starter_oauth_config_file)
     jira_url = config.get("oauth_config", "jira_base_url")
     consumer_key = config.get("oauth_config", "consumer_key")
     test_jira_issue = config.get("oauth_config","test_jira_issue")
-
-    with open(Path.home() / '.oauthconfig/oauth.pub', 'r') as key_cert_file:
-        rsa_public_key = key_cert_file.read()
+    rsa_public_key = read_rsa_public_key(path=rsa_public_key_file_path)
 
     return {
         "consumer_key": consumer_key,
@@ -117,7 +125,8 @@ def generate_oauth_token():
 
     consumer = oauth.Consumer(consumer_key, consumer_secret)
     client = oauth.Client(consumer)
-    client.set_signature_method(SignatureMethod_RSA_SHA1())
+    rsa_private_key = read_rsa_private_key(path=rsa_private_key_file_path)
+    client.set_signature_method(SignatureMethod_RSA_SHA1(rsa_private_key=rsa_private_key))
 
     # Step 1: Get a request token. This is a temporary token that is used for
     # having the user authorize an access token and to sign the request to obtain
@@ -161,7 +170,7 @@ def generate_oauth_token():
                         request_token['oauth_token_secret'])
     # token.set_verifier(oauth_verifier)
     client = oauth.Client(consumer, token)
-    client.set_signature_method(SignatureMethod_RSA_SHA1())
+    client.set_signature_method(SignatureMethod_RSA_SHA1(rsa_private_key=rsa_private_key))
 
     resp, content = client.request(access_token_url, "POST")
     # Response is coming in bytes. Let's convert it into String.
@@ -184,7 +193,7 @@ def generate_oauth_token():
     accessToken = oauth.Token(access_token['oauth_token'],
                               access_token['oauth_token_secret'])
     client = oauth.Client(consumer, accessToken)
-    client.set_signature_method(SignatureMethod_RSA_SHA1())
+    client.set_signature_method(SignatureMethod_RSA_SHA1(rsa_private_key=rsa_private_key))
 
     resp, content = client.request(data_url, "GET")
     if resp['status'] != '200':
