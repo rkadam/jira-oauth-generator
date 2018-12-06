@@ -57,21 +57,13 @@ Perform Jira OAuth Dance
 ================
 * Make sure you are in base directory of this Repo
 * Python Virtual Environment that we create earlier is active.
-```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ ls -1
-README.md
-access_using_requests_package.py
-config
-jira_oauth_token_generator.py
-requirements.txt
-```
 * Run **jira_oauth_token_generator.py**
 ```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py
+(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_generator/jira_oauth_token_generator.py
 ```
 * Authenticate in browser as directed below and then click **y** for question *Have you authorized me?*
 ```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_token_generator.py
+(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_generator/jira_oauth_token_generator.py
 
 Token:
     - oauth_token        = sdfsdf2342edfsdfwfwfwer23432423
@@ -114,13 +106,13 @@ test_issue_key=ITDOS-145
 ### Using OAuth1 tokens in Sample Jira Script.
 * Using Python Requests library
 ```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python access_using_requests_package.py dev
+(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_generator/access_using_requests_package.py dev
 (EXJIRA) Excitement for JIRA Project People
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗
 ```
 * Using Python JIRA library
 ```
-(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python access_using_jira_library.py prod
+(jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_generator/access_using_jira_library.py prod
 Reteriving Issue: ITEST-145
 Issue:ITEST-145, Summary: Test access request
 Reteriving 1st three Jira Projects available to you:
