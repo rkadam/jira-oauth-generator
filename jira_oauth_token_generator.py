@@ -24,6 +24,7 @@ from tlslite.utils import keyfactory
 import oauth2 as oauth
 
 
+# noinspection PyPep8Naming
 class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
     name = 'RSA-SHA1'
 
@@ -49,7 +50,7 @@ class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
         key, raw = self.signing_base(request, consumer, token)
 
         # Load RSA Private Key
-        with open( Path.home() / '.oauthconfig/oauth.pem', 'r') as f:
+        with open(Path.home() / '.oauthconfig/oauth.pem', 'r') as f:
             data = f.read()
         privateKeyString = data.strip()
 
@@ -65,8 +66,8 @@ class SignatureMethod_RSA_SHA1(oauth.SignatureMethod):
 
         return base64.b64encode(signature)
 
-def get_jira_oauth_init_parameters():
 
+def get_jira_oauth_init_parameters():
     # Assumption "starter_auth.config" file is stored in ~/.oauthconfig/ directory
     starter_oauth_config_file = Path.home() / ".oauthconfig/starter_oauth.config"
 
@@ -77,20 +78,20 @@ def get_jira_oauth_init_parameters():
     consumer_key = config.get("oauth_config", "consumer_key")
     test_jira_issue = config.get("oauth_config","test_jira_issue")
 
-    rsa_public_key = None
-    with open ( Path.home() / '.oauthconfig/oauth.pub', 'r') as key_cert_file:
+    with open(Path.home() / '.oauthconfig/oauth.pub', 'r') as key_cert_file:
         rsa_public_key = key_cert_file.read()
 
     return {
-        "consumer_key" : consumer_key,
-        "jira_base_url" : jira_url,
+        "consumer_key": consumer_key,
+        "jira_base_url": jira_url,
         "rsa_public_key": rsa_public_key,
         "test_jira_issue": test_jira_issue
     }
 
+
 init_dict = get_jira_oauth_init_parameters()
 consumer_key = init_dict["consumer_key"]
-consumer_secret =  init_dict["rsa_public_key"]
+consumer_secret = init_dict["rsa_public_key"]
 test_jira_issue = init_dict["test_jira_issue"]
 
 base_url = init_dict["jira_base_url"]
@@ -104,7 +105,7 @@ consumer = oauth.Consumer(consumer_key, consumer_secret)
 client = oauth.Client(consumer)
 client.disable_ssl_certificate_validation = True
 
-# Lets try to reterive mentioned Jira issue
+# Lets try to retrieve mentioned Jira issue
 resp, content = client.request(data_url, "GET")
 
 '''
@@ -129,18 +130,18 @@ if type(content) == bytes:
     content = content.decode('UTF-8')
 
 request_token = dict(parse.parse_qsl(content))
-print ("Request Token:")
-print (f"    - oauth_token        = {request_token['oauth_token']}")
-print ("    - oauth_token_secret = %s" % request_token['oauth_token_secret'])
-print ("")
+print("Request Token:")
+print(f"    - oauth_token        = {request_token['oauth_token']}")
+print("    - oauth_token_secret = %s" % request_token['oauth_token_secret'])
+print("")
 
 # Step 2: Redirect to the provider. Since this is a CLI script we do not
 # redirect. In a web application you would redirect the user to the URL
 # below.
 
-print ("Go to the following link in your browser:")
-print ("%s?oauth_token=%s" % (authorize_url, request_token['oauth_token']))
-print
+print("Go to the following link in your browser:")
+print("%s?oauth_token=%s" % (authorize_url, request_token['oauth_token']))
+print()
 
 # After the user has granted access to you, the consumer, the provider will
 # redirect you to whatever URL you have told them to redirect to. You can
@@ -162,18 +163,18 @@ client = oauth.Client(consumer, token)
 client.set_signature_method(SignatureMethod_RSA_SHA1())
 
 resp, content = client.request(access_token_url, "POST")
-# Reponse is coming in bytes. Let's convert it into String.
+# Response is coming in bytes. Let's convert it into String.
 # If output is in bytes. Let's convert it into String.
 if type(content) == bytes:
     content = content.decode('UTF-8')
 access_token = dict(parse.parse_qsl(content))
 
-print ("Access Token:")
-print ("    - oauth_token        = %s" % access_token['oauth_token'])
-print ("    - oauth_token_secret = %s" % access_token['oauth_token_secret'])
-print ("")
-print ("You may now access protected resources using the access tokens above.")
-print ("")
+print("Access Token:")
+print("    - oauth_token        = %s" % access_token['oauth_token'])
+print("    - oauth_token_secret = %s" % access_token['oauth_token_secret'])
+print("")
+print("You may now access protected resources using the access tokens above.")
+print("")
 
 print("")
 print(f"Accessing {test_jira_issue} using generated OAuth tokens:")
