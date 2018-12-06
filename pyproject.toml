@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Generator of access token for Jira OAuth"
 authors = ["Raju Kadam", "Roman Inflianskas <infroma@gmail.com>"]
 license = "Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/rominf/jira-oauth-generator"
 
 [tool.poetry.dependencies]
 python = "^3.5"
