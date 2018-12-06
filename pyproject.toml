@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "jira-oauth-generator"
-version = "0.1.0"
+version = "0.1.1"
 description = "Generator of access token for Jira OAuth"
 authors = ["Raju Kadam", "Roman Inflianskas <infroma@gmail.com>"]
 license = "Apache-2.0"
@@ -27,6 +27,9 @@ PyJWT = "^1.7"
 six = "^1.11"
 tlslite = "^0.4.9"
 urllib3 = "^1.24"
+requests = "^2.15.1"
+requests-oauthlib = "^1.0.0"
+requests-toolbelt = "^0.8.0"
 
 [tool.poetry.dev-dependencies]
 
