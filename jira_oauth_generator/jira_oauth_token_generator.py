@@ -203,11 +203,13 @@ if __name__ == '__main__':
     consumer, request_token, url = generate_request_token_and_auth_url(init_dict)
     logger.info(f"Request Token: oauth_token={request_token['oauth_token']}, "
                 f"oauth_token_secret={request_token['oauth_token_secret']}")
-    print_url_and_ask_for_continue(url=url)
-    access_token = generate_access_token(rsa_private_key=rsa_private_key,
-                                         consumer=consumer,
-                                         request_token=request_token,
-                                         access_token_url=get_access_token_url(base_url=base_url))
+    access_token = {'oauth_problem': True}
+    while 'oauth_problem' in access_token:
+        print_url_and_ask_for_continue(url=url)
+        access_token = generate_access_token(rsa_private_key=rsa_private_key,
+                                             consumer=consumer,
+                                             request_token=request_token,
+                                             access_token_url=get_access_token_url(base_url=base_url))
     logger.info(f"Access Token: oauth_token={access_token['oauth_token']}, "
                 f"oauth_token_secret={access_token['oauth_token_secret']}")
     logger.info("You may now access protected resources using the access tokens above.")
