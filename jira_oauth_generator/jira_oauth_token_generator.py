@@ -96,11 +96,13 @@ def get_jira_oauth_init_parameters():
     consumer_key = config.get("oauth_config", "consumer_key")
     # noinspection PyShadowingNames
     test_jira_issue = config.get("oauth_config", "test_jira_issue")
+    rsa_private_key = read_rsa_private_key(path=rsa_private_key_file_path)
     rsa_public_key = read_rsa_public_key(path=rsa_public_key_file_path)
 
     return {
         "consumer_key": consumer_key,
         "jira_base_url": jira_url,
+        "rsa_private_key": rsa_private_key,
         "rsa_public_key": rsa_public_key,
         "test_jira_issue": test_jira_issue
     }
@@ -110,13 +112,13 @@ def get_jira_oauth_init_parameters():
 def generate_request_token_and_auth_url(init_dict):
     consumer_key = init_dict["consumer_key"]
     consumer_secret = init_dict["rsa_public_key"]
+    rsa_private_key = init_dict["rsa_private_key"]
 
     request_token_url = base_url + '/plugins/servlet/oauth/request-token'
     authorize_url = base_url + '/plugins/servlet/oauth/authorize'
 
     consumer = oauth.Consumer(key=consumer_key, secret=consumer_secret)
     client = oauth.Client(consumer=consumer)
-    rsa_private_key = read_rsa_private_key(path=rsa_private_key_file_path)
     client.set_signature_method(SignatureMethod_RSA_SHA1(rsa_private_key=rsa_private_key))
 
     # Step 1: Get a request token. This is a temporary token that is used for
@@ -133,7 +135,7 @@ def generate_request_token_and_auth_url(init_dict):
     request_token = dict(parse.parse_qsl(content))
     url = f"{authorize_url}?oauth_token={request_token['oauth_token']}"
 
-    return rsa_private_key, consumer, request_token, url
+    return consumer, request_token, url
 
 
 # noinspection PyShadowingNames
@@ -196,8 +198,9 @@ if __name__ == '__main__':
     init_dict = get_jira_oauth_init_parameters()
     base_url = init_dict['jira_base_url']
     test_jira_issue = init_dict['test_jira_issue']
+    rsa_private_key = init_dict['rsa_private_key']
     data_url = get_data_url(base_url=base_url, test_jira_issue=test_jira_issue)
-    rsa_private_key, consumer, request_token, url = generate_request_token_and_auth_url(init_dict)
+    consumer, request_token, url = generate_request_token_and_auth_url(init_dict)
     logger.info(f"Request Token: oauth_token={request_token['oauth_token']}, "
                 f"oauth_token_secret={request_token['oauth_token_secret']}")
     print_url_and_ask_for_continue(url=url)
