@@ -65,14 +65,17 @@ Perform Jira OAuth Dance
 * After successful oAuth generation, you will get another set of values for **oauth_token** and **oauth_token_secret**. These are you tokens that you need to use access Jira without passing credentials.
 ```
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python jira_oauth_generator/jira_oauth_token_generator.py
-INFO:__main__:Request Token: oauth_token=LS1gHAyMA5kWPCPWfZhjAKMDtmL9SuQY, oauth_token_secret=DZqKURsivez9fPOJtIWPMaz5ki4UODYQ
-Go to the following link in your browser: https://jira-dev.kama.gs/plugins/servlet/oauth/authorize?oauth_token=LS1gHAyMA5kWPCPWfZhjAKMDtmL9SuQY
+Request Token: oauth_token=6AOSSREyS9HaACqEcHjcD6RJVms2NjEr, oauth_token_secret=gnpJMfbgUyG8W4dKzFW4PKFbGttV2CWm
+
+Go to the following link in your browser: https://jira.example.com/plugins/servlet/oauth/authorize?oauth_token=6AOSSREyS9HaACqEcHjcD6RJVms2NjEr
 Have you authorized me? (y/n) y
-INFO:__main__:Access Token: oauth_token=rsxoFVdH83H9olhCZ0YH8AlGqgbdoYuB, oauth_token_secret=DZqKURsivez9fPOJtIWPMaz5ki4UODYQ
-INFO:__main__:You may now access protected resources using the access tokens above.
-INFO:__main__:Accessing IDEV-1 using generated OAuth tokens:
-INFO:__main__:Success!
-INFO:__main__:Issue key: IDEV-1, Summary: Internal Devepment Issue #1
+
+Access Token: oauth_token=lmOh7LEdvZ2yxKIm5rdQY2ZfZqNdvUV4, oauth_token_secret=gnpJMfbgUyG8W4dKzFW4PKFbGttV2CWm
+You may now access protected resources using the access tokens above.
+
+Accessing IDEV-1 using generated OAuth tokens:
+Success!
+Issue key: IDEV-1, Summary: Internal Devepment Issue #1
 ```
 
 ## Copy both oauth_token and oauth_token_secret to .oauth_jira_config.<jira_env> file.

@@ -19,13 +19,11 @@ from pathlib import Path
 from urllib import parse
 import base64
 import json
-import logging
 
 from tlslite.utils import keyfactory
 import oauth2 as oauth
 
 
-logger = logging.getLogger(__name__)
 oauth_config_dir_path = Path.home() / '.oauthconfig'
 starter_oauth_config_file = oauth_config_dir_path / 'starter_oauth.config'
 rsa_private_key_file_path = oauth_config_dir_path / 'oauth.pem'
@@ -170,7 +168,7 @@ def generate_access_token(rsa_private_key, consumer, request_token, access_token
 
 # noinspection PyShadowingNames
 def check_access_token(access_token, data_url):
-    logger.info(f"Accessing {test_jira_issue} using generated OAuth tokens:")
+    print(f"Accessing {test_jira_issue} using generated OAuth tokens:")
 
     # Now lets try to access the same issue again with the access token. We should get a 200!
     token = oauth.Token(key=access_token['oauth_token'], secret=access_token['oauth_token_secret'])
@@ -181,16 +179,15 @@ def check_access_token(access_token, data_url):
     if resp['status'] != '200':
         raise Exception("Should have access!")
 
-    logger.info("Success!")
+    print("Success!")
     # If output is in bytes. Let's convert it into String.
     if type(content) == bytes:
         content = content.decode('UTF-8')
     json_content = json.loads(s=content)
-    logger.info(f'Issue key: {json_content["key"]}, Summary: {json_content["fields"]["summary"]} ')
+    print(f'Issue key: {json_content["key"]}, Summary: {json_content["fields"]["summary"]} ')
 
 
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.INFO)
     init_dict = get_jira_oauth_init_parameters()
     base_url = init_dict['jira_base_url']
     test_jira_issue = init_dict['test_jira_issue']
@@ -201,8 +198,9 @@ if __name__ == '__main__':
     consumer, request_token, url = generate_request_token_and_auth_url(consumer_key=consumer_key,
                                                                        consumer_secret=consumer_secret,
                                                                        rsa_private_key=rsa_private_key)
-    logger.info(f"Request Token: oauth_token={request_token['oauth_token']}, "
-                f"oauth_token_secret={request_token['oauth_token_secret']}")
+    print(f"Request Token: oauth_token={request_token['oauth_token']}, "
+          f"oauth_token_secret={request_token['oauth_token_secret']}")
+    print()
     access_token = {'oauth_problem': True}
     while 'oauth_problem' in access_token:
         print_url_and_ask_for_continue(url=url)
@@ -210,7 +208,9 @@ if __name__ == '__main__':
                                              consumer=consumer,
                                              request_token=request_token,
                                              access_token_url=get_access_token_url(base_url=base_url))
-    logger.info(f"Access Token: oauth_token={access_token['oauth_token']}, "
-                f"oauth_token_secret={access_token['oauth_token_secret']}")
-    logger.info("You may now access protected resources using the access tokens above.")
+    print()
+    print(f"Access Token: oauth_token={access_token['oauth_token']}, "
+          f"oauth_token_secret={access_token['oauth_token_secret']}")
+    print("You may now access protected resources using the access tokens above.")
+    print()
     check_access_token(access_token=access_token, data_url=data_url)
