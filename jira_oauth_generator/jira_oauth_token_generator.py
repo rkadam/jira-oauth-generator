@@ -107,7 +107,7 @@ def get_jira_oauth_init_parameters():
 
 
 # noinspection PyShadowingNames
-def generate_request_token_and_auth_url(consumer_key, consumer_secret, rsa_private_key):
+def generate_request_token_and_auth_url(base_url, consumer_key, consumer_secret, rsa_private_key):
     request_token_url = base_url + '/plugins/servlet/oauth/request-token'
     authorize_url = base_url + '/plugins/servlet/oauth/authorize'
 
@@ -195,7 +195,8 @@ if __name__ == '__main__':
     consumer_key = init_dict["consumer_key"]
     consumer_secret = init_dict["rsa_public_key"]
     data_url = get_data_url(base_url=base_url, test_jira_issue=test_jira_issue)
-    consumer, request_token, url = generate_request_token_and_auth_url(consumer_key=consumer_key,
+    consumer, request_token, url = generate_request_token_and_auth_url(base_url=base_url,
+                                                                       consumer_key=consumer_key,
                                                                        consumer_secret=consumer_secret,
                                                                        rsa_private_key=rsa_private_key)
     print(f"Request Token: oauth_token={request_token['oauth_token']}, "
