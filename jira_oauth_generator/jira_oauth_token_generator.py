@@ -167,7 +167,7 @@ def generate_access_token(rsa_private_key, consumer, request_token, access_token
 
 
 # noinspection PyShadowingNames
-def check_access_token(access_token, data_url, test_jira_issue):
+def check_access_token(access_token, consumer, data_url, test_jira_issue):
     print(f"Accessing {test_jira_issue} using generated OAuth tokens:")
 
     # Now lets try to access the same issue again with the access token. We should get a 200!
@@ -214,4 +214,4 @@ if __name__ == '__main__':
           f"oauth_token_secret={access_token['oauth_token_secret']}")
     print("You may now access protected resources using the access tokens above.")
     print()
-    check_access_token(access_token=access_token, data_url=data_url, test_jira_issue=test_jira_issue)
+    check_access_token(access_token=access_token, consumer=consumer, data_url=data_url, test_jira_issue=test_jira_issue)
