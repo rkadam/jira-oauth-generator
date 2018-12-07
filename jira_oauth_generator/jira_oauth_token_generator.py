@@ -109,11 +109,7 @@ def get_jira_oauth_init_parameters():
 
 
 # noinspection PyShadowingNames
-def generate_request_token_and_auth_url(init_dict):
-    consumer_key = init_dict["consumer_key"]
-    consumer_secret = init_dict["rsa_public_key"]
-    rsa_private_key = init_dict["rsa_private_key"]
-
+def generate_request_token_and_auth_url(consumer_key, consumer_secret, rsa_private_key):
     request_token_url = base_url + '/plugins/servlet/oauth/request-token'
     authorize_url = base_url + '/plugins/servlet/oauth/authorize'
 
@@ -199,8 +195,12 @@ if __name__ == '__main__':
     base_url = init_dict['jira_base_url']
     test_jira_issue = init_dict['test_jira_issue']
     rsa_private_key = init_dict['rsa_private_key']
+    consumer_key = init_dict["consumer_key"]
+    consumer_secret = init_dict["rsa_public_key"]
     data_url = get_data_url(base_url=base_url, test_jira_issue=test_jira_issue)
-    consumer, request_token, url = generate_request_token_and_auth_url(init_dict)
+    consumer, request_token, url = generate_request_token_and_auth_url(consumer_key=consumer_key,
+                                                                       consumer_secret=consumer_secret,
+                                                                       rsa_private_key=rsa_private_key)
     logger.info(f"Request Token: oauth_token={request_token['oauth_token']}, "
                 f"oauth_token_secret={request_token['oauth_token_secret']}")
     access_token = {'oauth_problem': True}
