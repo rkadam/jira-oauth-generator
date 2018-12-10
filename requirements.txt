@@ -13,7 +13,7 @@ oauthlib==2.1.0
 pbr==4.2.0
 pycparser==2.18
 PyJWT==1.6.4
-requests==2.19.1
+requests==2.20.0
 requests-oauthlib==1.0.0
 requests-toolbelt==0.8.0
 six==1.11.0
