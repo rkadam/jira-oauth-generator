@@ -2,7 +2,7 @@ JIRA OAuth1 Setup and Usage
 ====================
 
 ### Python 3 Setup
-* Create Python 3 Virtual Environment
+* Create Python 3 Virtual Environment (**Verified against Python 3.6.6**!)
 ```
 mkvirtualenv -p python3 jira_oauth1_py3_env
 ```
