@@ -116,7 +116,7 @@ consumer_key=jira-export-rest-api-access
 user_private_key_file_name=oauth.pem
 
 [server_info]
-jira_base_url=https://jira-dev.teslamotors.com
+jira_base_url=https://jira-dev.example.com
 
 [jira_oauth_generator]
 test_issue_key=ITDOS-145
