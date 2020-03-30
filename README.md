@@ -100,11 +100,11 @@ Have you authorized me? (y/n)
 > You may now access protected resources using the access tokens above.
 >
 >
-> Accessing EXJIRA-123 using generated OAuth tokens:
+> Accessing JIRA-123 using generated OAuth tokens:
 >
 > Success!
 >
-> Issue key: EXJIRA-123, Summary: This is EXJIRA-123 Summary
+> Issue key: JIRA-123, Summary: This is JIRA-123 Summary
 
 ## Copy both oauth_token and oauth_token_secret to .oauth_jira_config.<jira_env> file.
 ```
@@ -119,7 +119,7 @@ user_private_key_file_name=oauth.pem
 jira_base_url=https://jira-dev.example.com
 
 [jira_oauth_generator]
-test_issue_key=ITDOS-145
+test_issue_key=JIRA-123
 ```
 
 ### Using OAuth1 tokens in Sample Jira Script.
@@ -132,8 +132,8 @@ test_issue_key=ITDOS-145
 * Using Python JIRA library
 ```
 (jira_oauth1_py3_env) ➜  jira-oauth-generator git:(master) ✗ python access_using_jira_library.py prod
-Reteriving Issue: ITEST-145
-Issue:ITEST-145, Summary: Test access request
+Reteriving Issue: JIRA-123
+Issue:JIRA-123, Summary: Test access request
 Reteriving 1st three Jira Projects available to you:
 First 3 Projects are ['TES', 'TEst', 'TEST']
 ```
